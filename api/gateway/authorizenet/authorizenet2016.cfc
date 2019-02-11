@@ -93,10 +93,12 @@ component
 	function purchase(required Any money, Any account=nullValue(), Any customer=nullValue(), Any paymentProfile=nullValue(), Struct options={}){
 
 		//we either need an account (ergo a creditcard) OR a (customer and payment profile)
-
 		if(!isNull(account)){
-			if(lcase(listLast(getMetaData(arguments.account).fullname, ".")) NEQ "creditcard"){
-			throw("The account type #lcase(listLast(getMetaData(arguments.account).fullname, "."))# is not supported by this gateway.", "", "cfpayment.InvalidAccount");
+			if(
+				lcase(listLast(getMetaData(arguments.account).fullname, ".")) NEQ "creditcard"
+				and lcase(listLast(getMetaData(arguments.account).fullname, ".")) NEQ "eft"
+			){
+				throw("The account type #lcase(listLast(getMetaData(arguments.account).fullname, "."))# is not supported by this gateway.", "", "cfpayment.InvalidAccount");
 			}
 		}
 

@@ -50,8 +50,6 @@
 		<cfif transactionType EQ "priorAuthCaptureTransaction" && NOT structKeyExists(options, "refTransId")>
 			<cfthrow type="cfpayment.RequiredOptionMissing" message="transactionType, #transactionType# requires a refTransId in the options">
 		</cfif>
-
-
 		  
 		<cfxml variable="local.xml">
 			<cfoutput>
@@ -92,15 +90,26 @@
 
 			 
 
-
-			   <cfif !IsNull(account) >
-			   <payment>
-			      <creditCard>
-			        <cardNumber>#account.getAccount()#</cardNumber>
-			        <expirationDate>#DateFormat(account.getExpirationDate(), "MM/YY")#</expirationDate>
-			        <cardCode>#account.getVerificationValue()#</cardCode>
-			      </creditCard>
-			    </payment>
+			   
+			   	<cfif !IsNull(account) >
+				<cfif listLast(getMetaData(arguments.account).fullname, ".") eq 'creditcard'>
+					<payment>
+					<creditCard>
+						<cardNumber>#account.getAccount()#</cardNumber>
+						<expirationDate>#DateFormat(account.getExpirationDate(), "MM/YY")#</expirationDate>
+						<cardCode>#account.getVerificationValue()#</cardCode>
+					</creditCard>
+					</payment>
+				<cfelse>
+					<payment>
+						<bankAccount>
+							<accountType>#account.getAccountType()#</accountType>
+							<routingNumber>#account.getRoutingNumber()#</routingNumber>
+							<accountNumber>#account.getAccount()#</accountNumber>
+							<nameOnAccount>#account.getFirstName()# #account.getLastName()#</nameOnAccount>
+						</bankAccount>
+					</payment>		
+				</cfif>
 			    </cfif>
 
 
@@ -216,7 +225,7 @@
 			
 			</cfoutput>
 		</cfxml>
-
+		
 		<cfreturn local.xml>
 	</cffunction>
 
